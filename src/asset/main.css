@@ -3,3 +3,58 @@
     font-size:14px;
     color:deepskyblue;
 }
+body{
+    margin:0;
+    padding:0;
+}
+.header{
+    height:60px;
+    width:100%;
+    position: fixed;
+    background-color: deepskyblue;
+    box-sizing: border-box;
+    padding:10px;
+    border:1px solid red;
+}
+.logo{
+    display: inline-block;
+    width:80px;
+    height:40px;
+    border:1px solid gray;
+}
+.userInfo{
+    float: right;
+    border:1px solid gold;
+    height:40px;
+    line-height:40px;
+}
+.side{
+    width: 166px;
+    height: 100%;
+    background: #fff;
+    min-width: 166px;
+    float: left;
+    /* position: relative; */
+    overflow-y: auto;
+    position: fixed;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin-top: 60px;
+    padding-bottom: 60px;
+    border:1px solid blue;
+}
+.mainBody{
+    padding: 30px;
+    position: relative;
+    top: 60px;;
+    margin-left:167px;
+    border: 1px solid green;
+    background-color: #f0f2fa;
+}
+.content{
+    background: #ffffff;
+    width:100%;
+}
+.footer{
+    margin:0 auto;
+}
