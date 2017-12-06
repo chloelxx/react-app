@@ -5,9 +5,17 @@ import LeftMenu from "../layout/LeftMenu"
 import MainBody from "../layout/MainBody"
 import Footer from "../layout/Footer"
 import Login from "../login/Login.jsx"
-export default class Main extends Component{
+
+import { BrowserRouter, Route, Link } from "react-router-dom";
+
+import { connect } from 'react-redux'
+import cookies from "../common/common"
+import { todo, list, filters } from '../redux/action.jsx'
+
+// export default class Main extends Component
+class Main extends Component{
     state={
-        isLogin:false
+        isLogin:true
     }
     constructor(props) {
         super(props)
@@ -28,6 +36,7 @@ export default class Main extends Component{
         const pathname = window.location.pathname
 
         if (publicList.indexOf(pathname) > -1) {
+            this.handelState(true)
             return true
         } else {
             return false
@@ -35,11 +44,17 @@ export default class Main extends Component{
     }
 
     componentDidMount() {
+        var cook=new cookies();
         if (this.filterPathName()) {
             console.log("filterPathName");
             return null
         }
-        window.history.pushState(null,null,'/login')
+        if(cook.getCookieVal("username")) {
+            console.log("username",cook.getCookieVal("username"));
+            this.handelState(false)
+        }else{
+            window.history.pushState(null, null, '/login')
+        }
     }
     handelState(params){
         console.log("params:",params);
@@ -48,10 +63,13 @@ export default class Main extends Component{
         })
     }
      render(){
+         const { dispatch, items } = this.props;
          return (
              <div>
-                 {!this.state.isLogin?<Login handelState={isLogin=>this.handelState(isLogin)} />:<div >
-                     <Header />
+
+                 {this.state.isLogin? <Login handelState={isLogin=>this.handelState(isLogin)} />
+                     :<div >
+                     <Header  handelState={isLogin=>this.handelState(isLogin)} />
                      <LeftMenu />
                      {/*<MainBody />*/}
                      <Footer />
@@ -62,3 +80,20 @@ export default class Main extends Component{
          )
      }
 }
+
+Main.propTypes = {
+    items:React.PropTypes.array,
+}
+
+
+// Which props do we want to inject, given the global state?
+// Note: use https://github.com/faassen/reselect for better performance.
+function select(state) {
+    console.log("contain select is sign connent(select) state args param:",state)
+    return {
+        items:state.todos,
+    }
+}
+
+// 包装 component ，注入 dispatch 和 state 到其默认的 connect(select)(App) 中；
+export default connect(select)(Main)

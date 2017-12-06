@@ -1,22 +1,28 @@
 import React, { Component, PropTypes } from 'react'
+import DeleteTodo from './DeleteTodo.jsx'
 
 export default class Todo extends Component {
+
     render() {
         return (
+
             <li
-                onClick={this.props.onClick}
+                onClick={this.props.onClickD}
                 style={{
                     textDecoration: this.props.completed ? 'line-through' : 'none',
                     cursor: this.props.completed ? 'default' : 'pointer'
                 }}>
                 {this.props.text}
             </li>
+
+
         )
     }
 }
 
 Todo.propTypes = {
-    onClick: PropTypes.func.isRequired,
+    onClickD: PropTypes.func.isRequired,
     text: PropTypes.string.isRequired,
-    completed: PropTypes.bool.isRequired
+    // onDeleteClick:PropTypes.func.isRequired,
+    // onClickDel:PropTypes.func.isRequired,
 }

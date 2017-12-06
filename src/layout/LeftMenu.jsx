@@ -6,6 +6,8 @@ import MainBody from "./MainBody"
 import RouterCom from "../routers/RouterCom.jsx";
 import LinkCom from "../routers/LinkCom.jsx";
 import Main from "../PrimaryLayout"
+import Header from "../layout/Header"
+
 export default class LeftMenu extends Component{
     constructor(props){
         super(props);
@@ -13,6 +15,7 @@ export default class LeftMenu extends Component{
     render(){
         return (
                 <BrowserRouter >
+
                    {/* <div className="side">
                         <LinkCom />
                     </div>
@@ -21,7 +24,10 @@ export default class LeftMenu extends Component{
                             <RouterCom />
                         </div>
                     </div>*/}
-                    <MainBody />
+                    <div>
+                        <MainBody />
+
+                    </div>
                 </BrowserRouter>
         )
     }

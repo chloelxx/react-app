@@ -9,7 +9,6 @@ import PermissionMan from "../components/PermissionMan.jsx";
 import AuthRouter from './AuthRouter.jsx'
 
 import Login from "../login/Login.jsx"
-
 const RouterCom =({ match }) =>(
     <div>
             {/*<Switch>*/}
@@ -19,7 +18,7 @@ const RouterCom =({ match }) =>(
             <Route path="/messageMan" component={MessageMan} />
             <Route path="/APIDosMan" component={APIDosMan} />
             <Route path="/permissionMan" component={PermissionMan} />
-            {/*<Route path="/login" component={Login} />*/}
+
 
             {/*</Switch>*/}
             {/*</Route>*/}

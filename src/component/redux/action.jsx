@@ -2,35 +2,23 @@
  * action 类型
  */
 
-export const ADD_TODO = 'ADD_TODO';
-export const COMPLETE_TODO = 'COMPLETE_TODO';
-export const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER'
-
+export const add = 'add';
+export const change="change"
+export const del="del"
 /*
  * 其它的常量
  */
 
-export const VisibilityFilters = {
-    SHOW_ALL: 'SHOW_ALL',
-    SHOW_COMPLETED: 'SHOW_COMPLETED',
-    SHOW_ACTIVE: 'SHOW_ACTIVE'
-};
 
-/*
- * action 创建函数
- */
 
 export function addTodo(text) {
     console.log("action addTodo:",text);
-    return { type: ADD_TODO, text }
+    return { type: add, text }
 }
 
-export function completeTodo(index) {
-    console.log("action completeTodo:",index);
-    return { type: COMPLETE_TODO, index }
+export function changeTodo(text) {
+    return { type: change, text }
 }
-
-export function setVisibilityFilter(filter) {
-    console.log("action setVisibilityFilter:",filter);
-    return { type: SET_VISIBILITY_FILTER, filter }
+export function deleteTodo(text) {
+    return { type: del, text }
 }

@@ -1,5 +1,6 @@
 import React,{Component} from "react";
 import ajax from "../ajax/ajax"
+import cookies from "../common/common.js"
 /*const Login = () =>
     <div>
         <label>用户名：<input type="text" /></label>
@@ -15,14 +16,20 @@ class Login extends Component{
     login(e){
         e.preventDefault();
         e.stopPropagation()
+        var that=this;
         console.log("click")
+        var cook=new cookies();
         var params={username:"admin",pwd:"123456"}
-         ajax("http://127.0.0.1:3001/login","POST",JSON.stringify(params));
+         ajax("http://127.0.0.1:3001/login","POST",JSON.stringify(params)).then(function(){
+             window.history.pushState(null,null,"/")
+             that.props.handelState(false);
+             cook.setCookies("username","admin","/","7")
+         })
         // console.log("state:",this.state);
         /*this.state={isLogin:true};
         setState*/
-        this.props.handelState(true);
-        window.history.pushState(null,null,"/")
+
+
 
     }
     render(){

@@ -4,13 +4,18 @@ export default function ajax(url,method,params) {
     xhr.open(method,url,true);
     xhr.setRequestHeader("Content-Type","application/json;charset=utf-8");
     xhr.send(params);
-    xhr.onreadystatechange=function () {
-        if(xhr.readyState==4){
-            if(xhr.status==200){
-                alert("请求成功");
-            }else{
-                alert("请求失败");
+    return new Promise(function (res,rej) {
+        xhr.onreadystatechange=function () {
+            if(xhr.readyState==4){
+                if(xhr.status==200){
+                    console.log("200")
+                   res();
+                }else{
+                    console.log("xhr:",xhr.status)
+                   rej();
+                }
             }
         }
-    }
+
+    })
 }
