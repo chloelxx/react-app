@@ -15,13 +15,18 @@ export default class TodoList extends Component {
                                   this.props.onChangeClick(todo.text)
                               }}
                         >
-
-                        </Todo>
-                        <DeleteTodo onClickDel={(event) => {
+                            <DeleteTodo onClickDel={(event) => {
                                 console.log("span click",event)
                                 event.stopPropagation()
                                 this.props.onDeleteClick(todo.text)
                             }} />
+
+                        </Todo>
+                        {/*<DeleteTodo onClickDel={(event) => {*/}
+                                {/*console.log("span click",event)*/}
+                                {/*event.stopPropagation()*/}
+                                {/*this.props.onDeleteClick(todo.text)*/}
+                            {/*}} />*/}
                     </div>
                 )}
             </ul>
