@@ -2,23 +2,18 @@ import React,{Component} from "react";
 import {Link } from "react-router-dom";
 import 'antd/dist/antd.css'
 import { Table, Divider,Row, Col,Input,Icon} from 'antd';
-import api from "../ajax/api.js"
-import AddBanner from "./AddBanner.jsx"
-
-
-import { connect } from 'react-redux'
+import api from "../../ajax/api.js"
 
 const Search = Input.Search;
 class HomePage extends Component{
     state={
-        pageSize:5,
+        pageSize:1,
         data:[],
         pageTotal:0,
         currentPage:1,
         pagination: {},
         loading: false,
         operator:false,
-        insert:"visible",
     }
     columns = [{
         title: 'banner名称',
@@ -27,52 +22,48 @@ class HomePage extends Component{
 
     },
         {
-        title: '图片',
-        rowKey : 'imgUrl',
-        // dataIndex:"imgUrl"
-        render: text => <img src={text.imgUrl} style={{height:"80px",width:"100px"}}/> ,
-    }, {
-        title: '链接地址',
-        dataIndex: 'url',
-        rowKey : 'url',
-    },{
-        title:"排序",
-        dataIndex:"orderNo",
-        rowKey :"orderNo"
-    },{
-        title: '上线时间',
-        dataIndex: 'onlineTime',
-        rowKey : 'onlineTime',
-    },{
-        title:"下线时间",
-        dataIndex:"offlineTime",
-        rowKey :"offlineTime"
-    },
+            title: '图片',
+            rowKey : 'imgUrl',
+            // dataIndex:"imgUrl"
+            render: text => <img src={text.imgUrl} style={{height:"80px",width:"100px"}}/> ,
+        }, {
+            title: '链接地址',
+            dataIndex: 'url',
+            rowKey : 'url',
+        },{
+            title:"排序",
+            dataIndex:"orderNo",
+            rowKey :"orderNo"
+        },{
+            title: '上线时间',
+            dataIndex: 'onlineTime',
+            rowKey : 'onlineTime',
+        },{
+            title:"下线时间",
+            dataIndex:"offlineTime",
+            rowKey :"offlineTime"
+        },
         {
-        title: '状态',
-        dataIndex: 'onlineStatus',
-        rowKey : 'onlineStatus',
-        render: (text) =>(
-            <span>
+            title: '状态',
+            dataIndex: 'onlineStatus',
+            rowKey : 'onlineStatus',
+            render: (text) =>(
+                <span>
                 {text.onlineStatus==2?"下线":"上线"}
             </span>
-        ),
-    },{
-        title:"操作",
-        rowKey :"operator",
-        render:(text)=>(
-            <span>
+            ),
+        },{
+            title:"操作",
+            rowKey :"operator",
+            render:(text)=>(
+                <span>
                 <Link to={"/bannerConfig/addBanner?id="+text.id}>编辑</Link>
             </span>
-        )
-    }];
+            )
+        }];
     constructor(props){
         super(props);
         this.addBanner=this.addBanner.bind(this)
-        console.log("HomePage this.props:",this.props)
-    }
-    componentWillMount(){
-      //  this.setState({insert:this.props.menuItems.banner.insert})
     }
     componentDidMount(){
         var params={
@@ -80,7 +71,6 @@ class HomePage extends Component{
             pageNum:this.state.currentPage,
             pageSize:this.state.pageSize,
         }
-     //   console.log("getState:",this.getState());
         this.getBannerData(params);
     }
     handleTableChange = (pagination, filters, sorter) => {
@@ -125,39 +115,26 @@ class HomePage extends Component{
     addBanner(){
         this.setState({operator:true})
     }
-
     render(){
-        console.log("homepage this.state.data:",this.state,this.props)
-        const {dispach,menuItems}=this.props;
-       // const insert=menuItems.banner.insert;
-      //  const insert=menuItems?menuItems.banner?menuItems.banner.insert?"visibile":"hidden";
-        var insert="hidden"
-        if(menuItems&&menuItems.banner&&menuItems.banner.insert){
-            insert="visible"
-        }
-        console.log("insert:",menuItems)
-
         return (
-        <div  style={{padding:"30px"}}>
-            <h1 style={{margin:"20px 20px"}}>商户banner</h1>
-            <hr/>
-            <Row style={{margin:"10px"}}>
-                <Col span={8}>banner名称：
-                    <Search placeholder="input search text" size="large" style={{width:"50%"}} onSearch={value=>{this.search(value)}}/>
-                </Col>
-                <Col span={4} offset={12} style={{float:"right"}}>
-                    <Link to="/bannerConfig/addBanner">
-                        <span onClick={this.addBanner} style={{visibility:insert}}>
-                            <Icon type="plus-circle-o" style={{marginRight:"5px"}}/>新增
-                        </span>
-                    </Link>
-                </Col>
-            </Row>
-            <Table columns={this.columns} rowKey="id"  dataSource={this.state.data}
-                   pagination={this.state.pagination}
-                   loading={this.state.loading}
-                   onChange={this.handleTableChange} />
-        </div>
+            <div  style={{padding:"30px"}}>
+                <h1 style={{margin:"20px 20px"}}>商户banner</h1>
+                <hr/>
+                <Row style={{margin:"10px"}}>
+                    <Col span={8}>banner名称：
+                        <Search placeholder="input search text" size="large" style={{width:"50%"}} onSearch={value=>{this.search(value)}}/>
+                    </Col>
+                    <Col span={4} offset={12} style={{float:"right"}}>
+                        <Link to="/bannerConfig/addBanner">
+                            <span onClick={this.addBanner}> <Icon type="plus-circle-o" style={{marginRight:"5px"}}/>新增</span>
+                        </Link>
+                    </Col>
+                </Row>
+                <Table columns={this.columns} rowKey="id"  dataSource={this.state.data}
+                       pagination={this.state.pagination}
+                       loading={this.state.loading}
+                       onChange={this.handleTableChange} />
+            </div>
         )
     }
 }
@@ -265,22 +242,4 @@ class HomePage extends React.Component {
                 }
             </div>*/}
 
-HomePage.propTypes = {
-    menuItems: React.PropTypes.object,
-}
-
-
-// Which props do we want to inject, given the global state?
-// Note: use https://github.com/faassen/reselect for better performance.
-function select(state) {
-    console.log("LinkCOm contain select is sign connent(select) state args param:",state)
-    return {
-        menuItems:state.todos[0],
-    }
-}
-
-// 包装 component ，注入 dispatch 和 state 到其默认的 connect(select)(App) 中；
-export default connect(select)(HomePage)
-/*
-
-export default HomePage*/
+export default HomePage

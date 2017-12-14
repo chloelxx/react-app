@@ -1,21 +1,38 @@
-export default function ajax(url,method,params) {
-    console.log("url,method,params:",url,method,params)
+const host_port='http://10.41.12.125:8081/partnerManager';
+export default function ajax(url,params,method) {
+    params=formdataStr(params);
     var xhr=new XMLHttpRequest();
-    xhr.open(method,url,true);
-    xhr.setRequestHeader("Content-Type","application/json;charset=utf-8");
+    xhr.open(method||"POST",host_port+url,true);
+   xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=utf-8");
+    xhr.withCredentials=true;
     xhr.send(params);
     return new Promise(function (res,rej) {
         xhr.onreadystatechange=function () {
             if(xhr.readyState==4){
-                if(xhr.status==200){
-                    console.log("200")
-                   res();
+                var data=xhr.responseText;
+                data=JSON.parse(data)
+                if(xhr.status==200) {
+                    if (data.rtnCode == "00000000") {
+                        res(data);
+                    } else {
+                        rej(data.msg);
+                    }
+
                 }else{
                     console.log("xhr:",xhr.status)
-                   rej();
+                    rej(data.msg);
                 }
             }
         }
-
     })
+}
+function formdataStr(params){
+    var str="";
+    for(var i in params){
+        if(params.hasOwnProperty(i)) {
+            str = str + i + "=" + params[i]+"&"
+        }
+    }
+    str=str.slice(0,-1);
+    return str;
 }

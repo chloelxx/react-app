@@ -15,6 +15,7 @@ body{
     box-sizing: border-box;
     padding:10px;
     border:1px solid red;
+    z-index:9;
 }
 .logo{
     display: inline-block;
@@ -65,4 +66,14 @@ body{
     border-radius: 6px;
     margin: 16px 28px 16px 0;
     float: left;
+}
+.tableCss{
+    padding:20px;
+}
+.helpCenter .ant-modal-header{
+    background: #0096ff;
+
+}
+.header .ant-modal-title{
+    color:#fff;
 }

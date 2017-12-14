@@ -1,26 +1,17 @@
 import { combineReducers } from 'redux'
-import { todo, list} from './action.jsx'
-
+import { menudata} from './action.jsx'
 function todos(state = [], action) {
-    console.log("reducer todos:",action)
+    console.log("reducer todos:",action,menudata)
     switch (action.type) {
-        case todo:
-            console.log("reducer todos function ADD_TODO:",todo)
-            return [
+        case "menudata":
+            console.log("reducer todos menudata",menudata)
+            console.log("nenudata:", [
                 ...state,
-                {
-                    text: action.text,
-                    completed: false
-                }
-            ]
-        case list:
-            return [
-                ...state.slice(0, action.index),
-                Object.assign({}, state[action.index], {
-                    completed: true
-                }),
-                ...state.slice(action.index + 1)
-            ]
+                action.payload,
+            ])
+            return [...state,action.payload];
+
+           
         default:
             return state
     }

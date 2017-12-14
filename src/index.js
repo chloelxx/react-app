@@ -10,10 +10,11 @@ import reducers from "./redux/reducers.jsx"
 import "./asset/main.css"
 
 import registerServiceWorker from './registerServiceWorker';
-//
+import Api from "./ajax/api.js"
 
 
 let store=createStore(reducers)
+
 ReactDOM.render(
     <Provider store={store}>
        <Main />

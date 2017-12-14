@@ -24,10 +24,7 @@ export default class LeftMenu extends Component{
                             <RouterCom />
                         </div>
                     </div>*/}
-                    <div>
                         <MainBody />
-
-                    </div>
                 </BrowserRouter>
         )
     }

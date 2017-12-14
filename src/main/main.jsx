@@ -11,7 +11,7 @@ import { BrowserRouter, Route, Link } from "react-router-dom";
 import { connect } from 'react-redux'
 import cookies from "../common/common"
 import { todo, list, filters } from '../redux/action.jsx'
-
+import Api from "../ajax/api.js"
 // export default class Main extends Component
 class Main extends Component{
     state={
@@ -42,7 +42,10 @@ class Main extends Component{
             return false
         }
     }
-
+    componentWillMount(){
+        console.log("mainBOdy willMount:")
+       // this.getMeunList()
+    }
     componentDidMount() {
         var cook=new cookies();
         if (this.filterPathName()) {
@@ -64,6 +67,7 @@ class Main extends Component{
     }
      render(){
          const { dispatch, items } = this.props;
+         console.log("Main this.props:",this.props);
          return (
              <div>
 

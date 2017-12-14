@@ -34,10 +34,11 @@ export default class TodoList extends Component {
     }
 }
 
+/*
 TodoList.propTypes = {
     onDeleteClick:PropTypes.func.isRequired,
     onChangeClick: PropTypes.func.isRequired,
     todos: PropTypes.arrayOf(PropTypes.shape({
         text: PropTypes.string.isRequired,
     }).isRequired).isRequired
-}
+}*/

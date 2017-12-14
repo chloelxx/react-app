@@ -28,6 +28,9 @@ const UsersPage1 =React.createClass({
     handleClick: function(event) {
         this.setState({liked: !this.state.liked});
     },
+    componentDidMount() {
+        this.getInitialState();
+    },
     render: function() {
         var text = this.state.liked ? '喜欢' : '不喜欢';
         return (
@@ -48,6 +51,9 @@ class UsersPage extends React.Component{
     handleClick=()=> {
         this.setState({liked: !this.state.liked});
     }
+    componentDidMount() {
+       console.log("111")
+    }
     render(){
         var text = this.state.liked ? '喜欢' : '不喜欢';
         return (
@@ -61,7 +67,10 @@ const Info = () => <h1>liuxingx</h1>;
 const Manager = () => <h1>黄晓鹏</h1>;
 
 // const Date11 = () => <h1>{new Date()}</h1>;
-const Date11=React.createClass({
+class Date11 extends React.Component{
+    componentDidMount() {
+        console.log("moutnt")
+    }
     render (){
         return (
             <h3>
@@ -69,5 +78,5 @@ const Date11=React.createClass({
             </h3>
         )
     }
-})
+}
 export default RouterCom

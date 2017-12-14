@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>input demo</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
+    <style>
+        input{
+            outline:none;
+            border:1px solid #cccccc;
+            box-shadow: 0 0 0 0;
+            padding:10px;
+            resize: none;
+            box-sizing: border-box;
+            background-color:transparent;
+            appearance:none;  /*下拉框去掉右侧图标*/
+            -moz-appearance:none;
+            -webkit-appearance:none;
+        }
+        label{
+            display: block;
+        }
+
+        .header{
+            position: fixed;
+            top:0;
+            border:1px solid red;
+            width:100%;
+            height:40px;
+        }
+        .footer{
+            position: fixed;
+            bottom:0;
+            border:1px solid #000;
+            width:100%;
+            height:40px;
+        }
+        .content{
+            border:2px solid #EE5500;
+            position: relative;
+            top:40px;
+            margin-bottom:40px;
+        }
+        .demo{
+            height:400px;border:1px solid yellow;
+            overflow: scroll;
+            /*overflow-scrolling: auto;*/
+            /*-webkit-overflow-scrolling:touch;*/
+        }
+    </style>
+</head>
+<body style="position: relative">
+<div class="header">
+    header
+</div>
+<div class="content">
+    <div class="demo">
+        以下代码可解决这种卡顿的问题：-webkit-overflow-scrolling: touch;，是因为这行代码启用了硬件加速特性，所以滑动很流畅。
+
+        实际上，Safari真的用了原生控件来实现，对于有-webkit-overflow-scrolling的网页，会创建一个UIScrollView，提供子layer给渲染模块使用。
+
+        在WebKit 108400版本左右才支持，所以iOS Safari应该是需要5.0。Android则是在4.0以上支持。
+        从前端开发的角度讲，只需要知道CSS的属性-webkit-overflow-scrolling是真的创建了带有硬件加速的系统级控件，所以效率很高。
+
+        上述所说的方法的确可以解决ios5.0、android4.0以后系统的滑动卡顿问题，不过呢在这还可以为大家推荐一些相关插件：iScroll
+
+        https://github.com/cubiq/iscroll
+
+        IScroll 实践指南
+
+        之所以iscroll会诞生，主要是因为无论是在iphone、ipod、android 或是更早前的移动webkit都没有提供一种原生的方式来支持在一个固定高度的容器内滚动内容。
+        这个不幸的规则导致所有web-app要模拟成app的样子时，只能由一个绝对定位的header 或是footer再加上一个可以内容的滚动的中间区域组成。
+        幸运的是移动webkit提供了一种强大的硬件加速的CSS属性，这个属性可以用来模拟这个缺失的功能，Iscroll从这里开始了前进之路，但是没有不带刺的玫瑰。让内容滚动像原生方式一般比想象中要难
+
+        通过样式:
+
+        overflow:scroll;
+        -webkit-overflow-scrolling:touch;
+        IOS5 已经能够支持区域滚动了。但是andriod4 还是不行...
+
+        iScroll 使用起来很简单，首先你需要一个合理的DOM结构：
+
+    推荐的样式：
+
+    #wrapper {
+    position:relative;
+    z-index:1;
+    width:/* your desired width, auto and 100% are fine */;
+    height:/* element height */;
+    overflow:/* hidden|auto|scroll */;
+    }
+    官方推荐这样的结构，因为iscroll只能滚动wrapper里的第一个子节点，或者说唯一一个子节点才能使得iscroll正确的生效。因为这个节点需要一个绝对定位的CSS属性，更重要的是这个节点里所包裹的内容有了一个统一的容器，我们只需要计算之后修改这个容器的属性值就可以达到我们滚动的效果。
+
+    iscroll 需要两个参数，第一个很简单就是外容器的id,第二个参数是一个参数对象。
+    通过这个对象可以传入iscroll的各项参数来配置iscroll。
+    他的参数基本分为四个部分
+
+    基础
+    滚动条
+    放大缩小
+    事件回调
+    以下是 iScroll参数以及其代表的意思：
+
+    hScroll: true, //是否水平滚动
+    vScroll: true, //是否垂直滚动
+    x: 0, //滚动水平初始位置
+    y: 0, //滚动垂直初始位置
+    bounce: true, //是否超过实际位置反弹
+    bounceLock: false, //当内容少于滚动是否可以反弹，这个实际用处不大
+    momentum: true, //动量效果，拖动惯性
+    lockDirection: true,
+    //当水平滚动和垂直滚动同时生效时，当拖动开始是否锁定另一边的拖动
+    useTransform: true, //是否使用CSS形变
+    useTransition: false, //是否使用CSS变换
+    topOffset: 0, //已经滚动的基准值(一般情况用不到)
+    checkDOMChanges: false, //是否自动检测内容变化
+    checkDOMChanges 这个不是十分靠得住，因为他目前是轮询检测offsetWidth、offsetHeight，然后才去调自身的refresh 重新计算滚动区域，但是有时候只检测这个不是很准..
+
+    // Scrollbar 的相关参数
+    hScrollbar: true, //是否显示水平滚动条
+    vScrollbar: true, //同上垂直滚动条
+    fixedScrollbar: isAndroid, //对andriod的fixed
+    hideScrollbar: isIDevice,  //是否隐藏滚动条
+    fadeScrollbar: isIDevice && has3d, //滚动条是否渐隐渐显
+    scrollbarClass: '', //字定义滚动条的样式名
+    通过scrollbar这些参数可以配置iscroll的滚动条，通过scrollbarClass可以自己定义一套滚动条的样式。
+
+    // Zoom 放大相关的参数
+    zoom: false, //默认是否放大
+    zoomMin: 1, //放大的最小倍数
+    zoomMax: 4, //最大倍数
+    doubleTapZoom: 2, //双触放大几倍
+    wheelAction: 'scroll', //鼠标滚动行为（还可以是zoom）
+    这个Zoom我觉得比较好用，对于一个固定显示图片区域的类似应用，可以非常简单的做到固定滚动，包括两指放大的应用。
+    wheelAction 这个参数是给PC的鼠标滚动定义的，可以定义为滚动鼠标滚轮放大。
+
+    // 自定义 Events 的相关参数
+    onRefresh: null, //refresh 的回调，关于自身何时调用refresh 后面会继续谈到
+    onBeforeScrollStart: function (e) { e.preventDefault(); },
+    //开始滚动前的时间回调，默认是阻止浏览器默认行为
+    onScrollStart: null, //开始滚动的回调
+    onBeforeScrollMove: null, //在内容移动前的回调
+    onScrollMove: null, //内容移动的回调
+    onBeforeScrollEnd: null, 在滚动结束前的回调
+    onScrollEnd: null, //在滚动完成后的回调
+    onTouchEnd: null, //手离开屏幕后的回调
+    onDestroy: null, //销毁实例的回调
+    onZoomStart: null,
+    onZoom: null,
+    onZoomEnd: null
+    通过了解以上参数，你可以非常容易的配置自己的iscroll 应用：
+    你可以通过onScrollEnd 事件回调在结束滚动后执行一段你自己的代码
+    你也可以简单的新建一个可以通过双触放大的固定滚动区域。
+    你也可以什么都不做，只是简单的约定碰到边界是否反弹，等等。
+
+    var myscroll = new iScroll('wrapper', {
+    hScroll: false, //是否水平滚动
+    vScroll: true, //是否垂直滚动
+    y: 10, //滚动垂直初始位置
+    bounce : false
+    });
+    当然，在使用时，如果对创建的iscroll 实例保存引用会有很多好处：
+    你可以在内容改变时，DOM结构发生改变时调用 myscroll.refresh()来重新计算固定滚动区域的内容高度，从而使得你的iscroll工作正常。
+    你也可以在你的应用结束时，用过这个引用调用destroy方法来，销毁这个iscroll 实例
+    等等....
+    当然，iscroll提供的Api也是非常丰富，所以我们可以通过使用iscroll来做很多webapp的应用
+
+    下面介绍一下iscroll的公用调用方法，以及参数的控制。
+
+    如何使用 iscroll 提供的API，以及一些没有提供的功能，如何通过参数来控制iscroll
+    Iscroll 提供的调用方法有：
+
+    destroy
+    refresh
+    scrollTo
+    scrollToElement
+    scrollToPage
+    disable
+    enable
+    stop
+    zoom
+    isReady
+    destroy
+    顾名思义，是用来销毁你实例化的iScroll 实例，包括之前绑定的所有iscroll 事件。
+
+    refresh
+    这个方法非常有用，当你的滚动区域的内容发生改变 或是 滚动区域不正确，都用通过调用refresh来使得iscroll 重新计算滚动的区域，包括滚动条，来使得iscroll 适合当前的dom。
+
+    scrollTo
+    这个方法接受4个参数x, y, time, relative x为移动的x轴坐标，y为移动的y轴坐标, time为移动时间，relative表示是否相对当前位置。
+
+    scrollToElement
+    这个方法实际上是对scrollTo的进一步封装，接受两个参数(el,time)，el为需要滚动到的元素引用，time为滚动时间。
+
+    scrollToPage
+    此方法接受三个参数(pageX,pageY,time)当滚动内容的高宽大于滚动范围时，iscroll 会自动分页，然后就能使用scrollToPage方法滚动到页面。当然，当hscroll为false 的时候，不能左右滚动。pageX这个参数就失去效果
+
+    disable
+    调用这个方法会立即停止动画滚动，并且把滚动位置还原成0，取消绑定touchmove,touchend、touchcancel事件。
+
+    enable
+    调用这个方法，使得iscroll恢复默认正常状态
+
+    stop
+    立即停止动画
+
+    zoom
+    改变内容的大小倍数,此方法接受4个参数，x,y,scale,time分别表示的意思为，放大的基准坐标，以及放大倍数，动画时间
+
+    isReady
+    当iscroll 没有处于正在滚动，没有移动过，没有改变大小时，此值为true
+
+    上一篇没有谈到snap这个属性，而这个属性往往是需要用iscroll作滚动组件非常关键的一个属性。还记得我们的iphone 菜单滚动效果吧？当手指触摸屏幕向左拉动到一半的情况，
+        应用菜单会自动滚动对齐到下一页。这个snap 属性就是用来实现这种效果的。
+    以上是官方例子的代码，展示了iscroll 滑动对齐到元素li。
+
+    snap值可以为true 或是 DOM元素的tagname，当为true时，对齐的坐标会根据可滚动的位置和滚动区域计算得到可滑动几页。如果为tagname,则滑动会对齐到元素上。举个例子
+    假设有这样一个列表，每个li里的img 都为居中显示，maxWidth 都等于屏幕宽度，li的宽度都为屏幕的宽度，那么上面的代码就可以实现一个滚动图片组件了
+
+    我们看到 iscroll 的所有的属性和 api 都旨在做一件事情，就是在固定区域内滚动。当然通过snap，我们可以很好的模拟iphone 菜单间的平滑滚动。
+
+    作者：独享奢华
+    链接：http://www.jianshu.com/p/1f4693d0ad2d
+    來源：简书
+    著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+    </div>
+    <label>
+        name11:   <input type="text" value="ggeeegg"/>
+    </label>
+    <label>
+        age:<input type="text" value="26"}>
+    </label>
+    作词 : 顾聆落
+
+    《遇萤》
+
+    橙光RPG剧情游戏《遇龙》主题曲
+
+
+
+    作词：顾聆落
+
+    作曲：执素兮
+
+    演唱：CRITTY
+
+
+
+    若千年的光阴
+
+    轮回里 是否只为寻觅着你
+
+    恍若所有月明
+
+    圆缺或是阴晴 都只为了你
+
+
+
+    尘缘似一场花雨
+
+    眉目缱绻中枯寂
+
+    指间的瞬息
+
+    拾得你一颗泪滴
+
+
+
+    若忘川的涟漪
+
+    随我心 是否只为不忘记你
+
+    恍若所有思绪
+
+    怜惜或是悲戚 都只为了你
+
+
+
+    尘缘似一场烟影
+
+    眉目缱绻中飘零
+
+    心之所寄
+
+    劫数应声而起
+
+
+
+    前生今生来生
+
+    与你相遇 在每个梦里
+
+    拂袖唤漫天流萤
+
+    掌心微光谁眼中倒映
+
+
+
+    回眸不舍离去
+
+    此情为你 在心上停栖
+
+    下一世 再与你永不分离
+
+
+
+    MUSIC
+
+
+
+    若忘川的涟漪
+
+    随我心 是否只为不忘记你
+
+    恍若所有思绪
+
+    怜惜或是悲戚 都只为了你
+
+
+
+    尘缘似一场流萤
+
+    眉目缱绻中宁静
+
+    照谁前行
+
+    灿若彻夜繁星
+
+
+
+    前生今生来生
+
+    与你相遇 在每个梦里
+
+    拂袖唤漫天流萤
+
+    掌心微光谁眼中倒映
+
+
+
+    回眸不舍离去
+
+    此情为你 在心上停栖
+
+    下一世 再与你永不分离
+
+
+
+    前生今生来生
+
+    与你相遇 在每个梦里
+
+    拂袖唤漫天流萤
+
+    掌心微光谁眼中倒映
+
+
+
+    回眸不舍离去
+
+    此情为你 在心上停栖
+
+    这一世 愿与你共存天地
+    不要说话
+    专辑：不想放手 (Don't Want To Let Go)
+    歌手：陈奕迅
+    来源：我喜欢的音乐
+    作曲 : 小柯
+
+    作词 : 小柯
+
+    深色的海面布满白色的月光
+
+
+
+    我出神望着海 心不知飞哪去
+
+    听到他在告诉你
+
+    说他真的喜欢你
+
+    我不知该 躲哪里
+
+    爱一个人是不是应该有默契
+
+    我以为你懂得每当我看着你
+
+    我藏起来的秘密
+
+    在每一天清晨里
+
+    暖成咖啡 安静的拿给你
+
+    愿意 用一支黑色的铅笔
+
+    画一出沉默舞台剧
+
+    灯光再亮 也抱住你
+
+    愿意 在角落唱沙哑的歌
+
+    再大声也都是给你
+
+    请用心听 不要说话
+
+    爱一个人是不是应该要默契
+
+    我以为你懂得每当我看着你
+
+    我藏起来的秘密
+
+    在每一天清晨里
+
+    暖成咖啡 安静的拿给你
+
+    愿意 用一支黑色的铅笔
+
+    画一出沉默舞台剧
+
+    灯光再亮 也抱住你
+
+    愿意 在角落唱沙哑的歌
+
+    再大声也都是给你
+
+    请用心听 不要说话
+
+    愿意 用一支黑色的铅笔
+
+    画一出沉默舞台剧
+
+    灯光再亮 也抱住你
+
+    愿意 在角落唱沙哑的歌
+
+    再大声也都是给你
+
+    请原谅我 不会说谎
+
+    愿意 用一支黑色的铅笔
+
+    画一出沉默舞台剧
+
+    灯光再亮 也抱住你
+
+    愿意 在角落唱沙哑的歌
+
+    再大声也都是给你
+
+    爱是用心吗 不要说话
+
+    歌词贡献者：BenWhitaker
+
+    包含这首歌的歌单
+
+    有没有一首歌，让你瞬间热泪盈眶
+    播放：7287万
+
+    华语｜那些温暖男声听起来总让人心疼
+    播放：4551万
+
+    有哪些好听的歌会让你感同身受
+    播放：1492万
+    相似歌曲
+
+    好久不见
+    陈奕迅
+
+    其实都没有
+    杨宗纬
+
+    她说
+    林俊杰
+
+    独家记忆
+    陈小春
+
+    娱乐 (Entertainment)
+    金玟岐
+    喜欢这首歌的人
+
+    10分钟前听过
+    檸钼
+
+    11分钟前听过
+    d你是狗
+
+    11分钟前听过
+    On7heMove
+
+    12分钟前听过
+    翱翔的鬼鬼
+
+    12分钟前听过
+    Acacai_
+    听友评论（已有65311条评论）
+    发表评论
+    精彩评论
+
+    你说的情深不寿:
+    <img  id="img" src="code.jpg"/>
+    <a href="javascript:void(0)"
+       id="save"
+       download="tupian"
+       style="display:inline-block;width:100px;height:40px;background-color: #EE5500"
+       onclick=getImg()
+       >
+        保存
+    </a>
+</div>
+<div class="footer">
+  footer
+</div>
+<canvas id="can" style="display: block" height="40px"></canvas>
+<script>
+
+    function getImg(){
+        var can=document.getElementById("can"),
+            cxt=can.getContext("2d");
+        var img=document.getElementById("img");
+            can.width=img.width;
+            can.height=img.height;
+            cxt.drawImage(img,0,0);
+            var base64=can.toDataURL('image/jpg');
+            console.log("base64:",base64)
+        var blob = base64Img2Blob(base64); //new Blob([content]);
+            window.localStorage.setItem("img",base64);
+        var a=document.getElementById("save");
+            a.href = URL.createObjectURL(blob);
+            alert("保存成功");
+    }
+
+    function base64Img2Blob(code){
+        var parts = code.split(';base64,');
+        var contentType = parts[0].split(':')[1];
+        var raw = window.atob(parts[1]);
+        var rawLength = raw.length;
+
+        var uInt8Array = new Uint8Array(rawLength);
+
+        for (var i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+
+        return new Blob([uInt8Array], {type: contentType});
+    }
+    function downloadFile(fileName, content){
+
+        var aLink = document.createElement('a');
+        var blob = base64Img2Blob(content); //new Blob([content]);
+
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent("click", false, false);//initEvent 不加后两个参数在FF下会报错
+        aLink.download = fileName;
+        aLink.href = URL.createObjectURL(blob);
+
+        aLink.dispatchEvent(evt);
+    }
+
+</script>
+</body>
+</html>
