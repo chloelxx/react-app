@@ -29,7 +29,7 @@ class addBanner extends Component{
 }
 
 export default addBanner*/
-
+import {Link } from "react-router-dom";
 import moment from 'moment';
 import { Form, Input, Upload, Icon, message, Button,DatePicker } from 'antd';
 import Api from "../ajax/api.js"
@@ -167,8 +167,11 @@ class addBanner extends React.Component {
              this.setState({addBanner:data.bizData})
              console.log("this state:",this.state,data.bizData);
             // this.props.form.bannerName=data.bizData.name
-        }).catch((msg)=>{
-           console.log("dddd")
+        }).catch((data)=>{
+            message.error(data.msg);
+            if(data.rtnCode=="biz_error_20002"){
+                window.history.pushState(null,null,"/login");
+            }
         })
     }
    /* onChangeInput=(e)=>{
@@ -257,7 +260,8 @@ class addBanner extends React.Component {
                         rules: [{
                             required: true, message: '',
                         }],
-                    })(*/}
+                    })(
+                    */}
                         <DatePicker
                             showTime
                             format="YYYY-MM-DD HH:mm:ss"
@@ -266,7 +270,7 @@ class addBanner extends React.Component {
                             onOk={onOk}
                             value={initBan.onlineTime?moment(initBan.onlineTime, this.format):null}
                         />
-                /*    )}*/
+                   {/*    )}*/}
 
                 </FormItem>
                 <FormItem
@@ -277,7 +281,8 @@ class addBanner extends React.Component {
                         rules: [{
                             required: true, message: '',
                         }],
-                    })(*/}
+                    })(
+                    */}
                         <DatePicker
                             showTime
                             format="YYYY-MM-DD HH:mm:ss"
@@ -286,12 +291,12 @@ class addBanner extends React.Component {
                             onOk={onOk}
                             value={initBan.offlineTime?moment(initBan.offlineTime, this.format):null}
                         />
-               /*     )}*/
+           {/*     )}*/}
                 </FormItem>
                 <FormItem    wrapperCol={{ span:7, offset: 8 }}>
-                    {/*htmlType="submit"*/}
-                    <Button type="primary" htmlType="submit">确认</Button>
-                    <Button onClick={this.test}>取消</Button>
+                    {/*htmlType="submit"*  onClick={this.test}*/}
+                    <Button type="primary" htmlType="submit"><Link to="/banner">确认</Link></Button>
+                    <Button ><Link to="/banner">取消</Link></Button>
                 </FormItem>
             </Form>
         );

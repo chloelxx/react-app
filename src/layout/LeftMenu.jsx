@@ -13,19 +13,12 @@ export default class LeftMenu extends Component{
         super(props);
     }
     render(){
-        return (
-                <BrowserRouter >
 
-                   {/* <div className="side">
-                        <LinkCom />
-                    </div>
-                    <div className="mainBody">
-                        <div className="content">
-                            <RouterCom />
-                        </div>
-                    </div>*/}
-                        <MainBody />
-                </BrowserRouter>
+        return (
+
+            <BrowserRouter >
+                <MainBody />
+            </BrowserRouter>
         )
     }
 }

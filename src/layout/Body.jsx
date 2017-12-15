@@ -5,7 +5,7 @@ import Header from "../layout/Header"
 import RouterCom from "../routers/RouterCom.jsx";
 import LinkCom from "../routers/LinkCom.jsx";
 import LeftMenu from "./LeftMenu";
-export default class MainBody extends Component{
+export default class Body extends Component{
     state={
 
     }
@@ -17,7 +17,7 @@ export default class MainBody extends Component{
     render(){
         return (
             <div>
-                <Header  handelState={isLogin=>this.handelState(isLogin)} />
+                <Header {...this.props} />
                 <div>
                     <div className="side">
                         <LinkCom />
@@ -30,16 +30,16 @@ export default class MainBody extends Component{
                 </div>
             </div>
 
-           /* <div>
-                 <div className="side">
-                    <LinkCom />
-                </div>
-                <div className="mainBody">
-                    <div className="content">
-                        <RouterCom />
-                    </div>
-                </div>
-            </div>*/
+            /* <div>
+                  <div className="side">
+                     <LinkCom />
+                 </div>
+                 <div className="mainBody">
+                     <div className="content">
+                         <RouterCom />
+                     </div>
+                 </div>
+             </div>*/
         )
     }
 }

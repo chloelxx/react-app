@@ -1,7 +1,9 @@
-const host_port='http://10.41.12.125:8081/partnerManager';
+const host_port='http://10.41.12.95:8081/partnerManager';
 export default function ajax(url,params,method) {
     params=formdataStr(params);
-    var xhr=new XMLHttpRequest();
+
+       var xhr=new XMLHttpRequest();
+
     xhr.open(method||"POST",host_port+url,true);
    xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=utf-8");
     xhr.withCredentials=true;
@@ -10,17 +12,17 @@ export default function ajax(url,params,method) {
         xhr.onreadystatechange=function () {
             if(xhr.readyState==4){
                 var data=xhr.responseText;
-                data=JSON.parse(data)
+                if(data){
+                    data=JSON.parse(data)
+                }
                 if(xhr.status==200) {
                     if (data.rtnCode == "00000000") {
                         res(data);
-                    } else {
-                        rej(data.msg);
+                    } else{
+                        rej(data);
                     }
-
                 }else{
-                    console.log("xhr:",xhr.status)
-                    rej(data.msg);
+                    rej(data);
                 }
             }
         }

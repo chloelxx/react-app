@@ -1,28 +1,37 @@
 import React,{Component} from 'react';
-import ReactDOM from 'react-dom';
-import Header from "../layout/Header"
-import LeftMenu from "../layout/LeftMenu"
-import MainBody from "../layout/MainBody"
-import Footer from "../layout/Footer"
+
+
+import Homepage from "../components/HomePage.jsx";
+import BannerConfig from "../components/BannerConfig.jsx";
+import MerchantMan from "../components/merchant/MerchantList.jsx";
+import HelpList from "../components/helpcenter/HelpList.jsx";
+import Message from "../components/message/MessageList.jsx"
+import APIDosMan from "../components/apiDos.jsx";
+import PermissionMan from "../components/PermissionMan.jsx";
+import AddBanner from "../components/AddBanner.jsx"
+import helpDetail from "../components/helpcenter/HelpDetail.jsx"
 import Login from "../login/Login.jsx"
-
-import { BrowserRouter, Route, Link } from "react-router-dom";
-
+import Header from "../layout/Header.jsx"
+import Footer from "../layout/Footer.jsx"
+import { BrowserRouter, Route, Redirect,withRouter } from "react-router-dom";
 import { connect } from 'react-redux'
 import cookies from "../common/common"
+import AthRouter from "./withRouter.jsx"
 import { todo, list, filters } from '../redux/action.jsx'
-import Api from "../ajax/api.js"
-// export default class Main extends Component
+import LeftMenu from "../layout/LeftMenu";
+
+import Body from "../layout/Body.jsx"
+
 class Main extends Component{
     state={
-        isLogin:true
+        isLogin:true,
+        show:"none"
     }
     constructor(props) {
         super(props)
+        console.log("withRouter:",this.props)
         this.filterPathName = this.filterPathName.bind(this)
-        console.log("props:",this.props);
         this.state = this.state
-        console.log("this.state:",this.state);
     }
     /**
      * 过滤目标地址
@@ -36,51 +45,51 @@ class Main extends Component{
         const pathname = window.location.pathname
 
         if (publicList.indexOf(pathname) > -1) {
-            this.handelState(true)
+             this.handelState(true)
             return true
         } else {
             return false
         }
     }
     componentWillMount(){
-        console.log("mainBOdy willMount:")
-       // this.getMeunList()
+        this.filterPathName()
     }
     componentDidMount() {
-        var cook=new cookies();
+        this.handelState(true)
+        this.filterPathName()
+        console.log("filterPathName:",this.props.history);
         if (this.filterPathName()) {
-            console.log("filterPathName");
+            console.log("filterPathName:",this.props.history);
             return null
         }
-        if(cook.getCookieVal("username")) {
-            console.log("username",cook.getCookieVal("username"));
-            this.handelState(false)
-        }else{
-            window.history.pushState(null, null, '/login')
-        }
+
     }
     handelState(params){
-        console.log("params:",params);
         this.setState({
             isLogin:params
         })
     }
      render(){
          const { dispatch, items } = this.props;
-         console.log("Main this.props:",this.props);
-         return (
-             <div>
-
-                 {this.state.isLogin? <Login handelState={isLogin=>this.handelState(isLogin)} />
-                     :<div >
+         {/* <div>
+                {this.state.isLogin?  <Login handelState={isLogin=>this.handelState(isLogin)} />
+                 :<div >
                      <Header  handelState={isLogin=>this.handelState(isLogin)} />
                      <LeftMenu />
-                     {/*<MainBody />*/}
                      <Footer />
                  </div>}
+             </div>*/}
 
-             </div>
+         return (
 
+         <BrowserRouter>
+             <switch>
+                 <AthRouter></AthRouter>
+                 <Route path="/login" component={Login}/>
+                 <Route path="/main" component={Body}/>
+
+             </switch>
+         </BrowserRouter>
          )
      }
 }
@@ -93,11 +102,11 @@ Main.propTypes = {
 // Which props do we want to inject, given the global state?
 // Note: use https://github.com/faassen/reselect for better performance.
 function select(state) {
-    console.log("contain select is sign connent(select) state args param:",state)
     return {
         items:state.todos,
     }
 }
 
+const tt=connect(select)(Main)
 // 包装 component ，注入 dispatch 和 state 到其默认的 connect(select)(App) 中；
 export default connect(select)(Main)

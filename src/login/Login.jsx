@@ -2,6 +2,7 @@ import React,{Component} from "react";
 import api from "../ajax/api.js"
 import cookies from "../common/common.js"
 import md5 from 'js-md5'
+import {message} from 'antd';
 /*const Login = () =>
     <div>
         <label>用户名：<input type="text" /></label>
@@ -23,25 +24,19 @@ class Login extends Component{
             account:this.refs.username.value,
             password: md5(this.refs.pwd.value),
         }
-        console.log("param:",params);
-         api.login(params).then(function(res){
-             //window.history.pushState(null,null,"/bannerConfig")
-
+        console.log("param:",this.props);
+         api.login(params).then(res=>{
              cook.setCookies("username","admin","/","7")
              console.log("res login:",res)
-             alert(res.msg)
-             that.props.handelState(false);
-         }).catch(function(res){
-             alert(res.msg)
+             message.success(res.msg)
+             this.props.history.push("/main/banner")
+           //  that.props.handelState(false);
+         }).catch((res)=>{
+             message.error(res.msg)
          })
-        // console.log("state:",this.state);
-        /*this.state={isLogin:true};
-        setState*/
-
-
-
     }
     render(){
+        console.log("Login:")
         return(
             <div>
                 <label>用户名：<input type="text" ref="username"/></label>

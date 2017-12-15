@@ -1,7 +1,7 @@
 import React,{ Component }  from "react";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import 'antd/dist/antd.css'
-import { Menu, Icon } from 'antd';
+import { Menu, Icon,message } from 'antd';
 import Api from "../ajax/api.js"
 
 import { connect } from 'react-redux'
@@ -68,6 +68,11 @@ class Aside extends Component {
           //  this.setState({menu:res.bizData});
            
             this.matchMenuData(res.bizData);
+        }).catch((data)=>{
+            message.error(data.msg);
+            if(data.rtnCode=="biz_error_20002"){
+                window.history.pushState(null,null,"/login");
+            }
         })
         console.log("will mount getMeunList state:",this)
     }
@@ -135,7 +140,7 @@ class Aside extends Component {
                     {menuData.map( (item,index)=> {
                         return (
                             <Menu.Item key={index}>
-                                <Link to={"/"+item.key}>{item.text}</Link>
+                                <Link to={"/main/"+item.key}>{item.text}</Link>
                             </Menu.Item>
                         )
                     })}

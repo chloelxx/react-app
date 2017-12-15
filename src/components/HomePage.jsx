@@ -1,7 +1,7 @@
 import React,{Component} from "react";
 import {Link } from "react-router-dom";
 import 'antd/dist/antd.css'
-import { Table, Divider,Row, Col,Input,Icon} from 'antd';
+import { Table, Divider,Row, Col,Input,Icon,message} from 'antd';
 import api from "../ajax/api.js"
 import AddBanner from "./AddBanner.jsx"
 
@@ -109,6 +109,11 @@ class HomePage extends Component{
                 loading: false,
                 pagination,
             });
+        }).catch((data)=>{
+            message.error(data.msg);
+            if(data.rtnCode=="biz_error_20002"){
+                window.history.pushState(null,null,"/login");
+            }
         })
     }
     search(value){
@@ -127,16 +132,12 @@ class HomePage extends Component{
     }
 
     render(){
-        console.log("homepage this.state.data:",this.state,this.props)
         const {dispach,menuItems}=this.props;
-       // const insert=menuItems.banner.insert;
-      //  const insert=menuItems?menuItems.banner?menuItems.banner.insert?"visibile":"hidden";
+
         var insert="hidden"
         if(menuItems&&menuItems.banner&&menuItems.banner.insert){
             insert="visible"
         }
-        console.log("insert:",menuItems)
-
         return (
         <div  style={{padding:"30px"}}>
             <h1 style={{margin:"20px 20px"}}>商户banner</h1>
