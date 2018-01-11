@@ -1,4 +1,4 @@
-const host_port='http://10.41.12.95:8081/partnerManager';
+const host_port='http://10.41.12.125:8081/partnerManager';
 export default function ajax(url,params,method) {
     params=formdataStr(params);
 

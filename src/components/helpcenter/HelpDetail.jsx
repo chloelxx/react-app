@@ -1,12 +1,14 @@
 import React,{Component} from "react";
 import {Link } from "react-router-dom";
 import 'antd/dist/antd.css'
-import { Table, Divider,Row, Col,Input,Icon,Modal,Button} from 'antd';
-import api from "../../ajax/api.js"
+import { Table, Divider,Row, Col,Input,Icon,Modal,Button,message} from 'antd';
+import Api from "../../ajax/api.js"
 import parseUrl from "../../ajax/parseURL.js"
+import Delete from "../baise/Delete.jsx"
+import {connect} from "react-redux"
 
 const Search = Input.Search;
-class HelpList extends Component{
+class HelpDetailList extends Component{
     state={
         pageSize:1,
         data:[],
@@ -23,7 +25,15 @@ class HelpList extends Component{
         dataIndex: 'problemTitle',
         rowKey : 'name',
 
-    },{
+    }, {
+        title: '问题描述',
+        dataIndex: 'problemSolution',
+        rowKey: 'detail',
+        width: "400px",
+        render: (problemSolution) => (
+            <div dangerouslySetInnerHTML={{__html: problemSolution}} />
+        )
+    }, {
             title: '排序',
             dataIndex: 'showIndex',
             rowKey : 'showIndex',
@@ -32,8 +42,9 @@ class HelpList extends Component{
             rowKey :"set",
             render:(text)=>(
                 <span>
-                  <Link to={"/helpDetail/helpDetailModify?id="+text.id} style={{marginRight:"20px"}}>修改</Link>
-                  <Link to={"/helpDetail?id="+text.id}>删除</Link>
+                 {/* <Link to={"/main/helpDetailModify?id="+text.id} style={{marginRight:"20px"}}>修改</Link>*/}
+                  <a onClick={()=>this.modifyHelpDetail(text)} style={{marginRight:"20px"}}>修改</a>
+                  <a onClick={()=>this.deleteHelpDetail(text.id)}>删除</a>
                </span>
             )
         }];
@@ -67,7 +78,13 @@ class HelpList extends Component{
     }
     getBannerData(params){
         this.setState({ loading: true });
-        api.getAllHelpDetail(params).then((res)=>{
+        var pm={
+            helpCenterId:this.state.helpCenterId,
+            pageNum:this.state.currentPage,
+            pageSize:this.state.pageSize,
+        }
+        params=params?params:pm;
+        Api.getAllHelpDetail(params).then((res)=>{
             const pagination = { ...this.state.pagination };
             this.setState({data:res.bizData.list,pageTotal:res.bizData.total})
             pagination.total=parseInt(res.bizData.total);
@@ -98,6 +115,39 @@ class HelpList extends Component{
     addBanner(){
         this.setState({operator:true})
     }
+    modifyHelpDetail=(data)=>{
+        this.props.dispatch({type:"modify",payload:data})
+        this.props.history.push("/main/helpDetailModify?modifyid="+data.id+"&id="+data.helpCenterId);
+    }
+    deleteHelpDetail=(id)=>{
+        console.log("helpcenter:",this.props);
+        this.props.dispatch({type:"delDialog",
+            payload:{
+                visible:true,
+                param:{
+                    id:id,
+                },
+                api:"deleteHelpDetail"
+            }
+        })
+    }
+    handleDialog=(para,isDelete)=>{
+        this.setState({
+            delete: true,
+        });
+        if(isDelete){
+            Api.deleteHelpDetail({
+                id: this.state.deleteId,
+            }).then(data => {
+                message.success("删除成功");
+                this.getBannerData();
+                this.setState({delete:false});
+            }).catch((data)=>{
+                message.error(data.msg)
+            });
+        }
+        this.getBannerData();
+    }
     render(){
         return (
             <div  style={{padding:"30px"}}>
@@ -107,139 +157,27 @@ class HelpList extends Component{
                     <Col span={8}>
                     </Col>
                     <Col span={4} offset={12} style={{float:"right"}}>
-                        {/*<Link to="/bannerConfig/addBanner">*/}
+                        <Link to={"/main/helpDetailInsert?id="+this.state.helpCenterId}>
                             <span onClick={this.showModal}> <Icon type="plus-circle-o" style={{marginRight:"5px"}}/>新增</span>
-                        {/*</Link>*/}
+                        </Link>
                     </Col>
                 </Row>
                 <Table columns={this.columns} rowKey="id"  dataSource={this.state.data}
                        pagination={this.state.pagination}
                        loading={this.state.loading}
                        onChange={this.handleTableChange} />
-                <Modal
-                    visible={this.state.visible}
-                    title="Title"
-                    onOk={this.handleOk}
-                    onCancel={this.handleCancel}
-                    footer={[
-                        <Button key="back" onClick={this.handleCancel}>Return</Button>,
-                        <Button key="submit" type="primary" loading={this.state.loading} onClick={this.handleOk}>
-                            Submit
-                        </Button>,
-                    ]}
-                >
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                </Modal>
+                <Delete handelDel={this.handleDialog}/>
             </div>
         )
     }
 }
 
-/*
-const columns = [{
-    title: 'Name',
-    dataIndex: 'name',
-    sorter: true,
-    render: name => `${name.first} ${name.last}`,
-    width: '20%',
-}, {
-    title: 'Gender',
-    dataIndex: 'gender',
-    filters: [
-        { text: 'Male', value: 'male' },
-        { text: 'Female', value: 'female' },
-    ],
-    width: '20%',
-}, {
-    title: 'Email',
-    dataIndex: 'email',
-}];
+function select(state) {
+    console.log("LinkCOm contain select is sign connent(select) state args param:",state)
+    return {
+        data:state.todos.menudata,
+    }
+}
 
-class HomePage extends React.Component {
-    state = {
-        data: [],
-        pagination: {},
-        loading: false,
-    };
-    handleTableChange = (pagination, filters, sorter) => {
-        const pager = { ...this.state.pagination };
-        pager.current = pagination.current;
-        this.setState({
-            pagination: pager,
-        });
-        this.fetch({
-            results: pagination.pageSize,
-            page: pagination.current,
-            sortField: sorter.field,
-            sortOrder: sorter.order,
-            ...filters,
-        });
-    }
-    fetch = (params = {}) => {
-        console.log('params:', params);
-        this.setState({ loading: true });
-        reqwest({
-            url: 'https://randomuser.me/api',
-            method: 'get',
-            data: {
-                results: 10,
-                ...params,
-            },
-            type: 'json',
-        }).then((data) => {
-            const pagination = { ...this.state.pagination };
-            // Read total count from server
-            // pagination.total = data.totalCount;
-            pagination.total = 200;
-            this.setState({
-                loading: false,
-                data: data.results,
-                pagination,
-            });
-            console.log("pagination:",pagination)
-        });
-    }
-    componentDidMount() {
-        this.fetch();
-    }
-    render() {
-        return (
-            <Table columns={columns}
-                   rowKey={record => record.registered}
-                   dataSource={this.state.data}
-                   pagination={this.state.pagination}
-                   loading={this.state.loading}
-                   onChange={this.handleTableChange}
-            />
-        );
-    }
-}*/
-
-{/*   <div  style={{padding:"30px"}}>
-                {
-                    this.state.operator?<AddBanner handle={isAdd=>this.mutiOperator(isAdd)}/>:<div>
-                    <h1 style={{margin:"20px 20px"}}>商户banner</h1>
-                    <hr/>
-                    <Row style={{margin:"10px"}}>
-                        <Col span={8}>banner名称：
-                            <Search placeholder="input search text" size="large" style={{width:"50%"}} onSearch={value=>{this.search(value)}}/>
-                        </Col>
-                        <Col span={4} offset={12} style={{float:"right"}}>
-                            <Link to="/bannerConfig/addBanner">
-                                <span onClick={this.addBanner}> <Icon type="plus-circle-o" style={{marginRight:"5px"}}/>新增</span>
-                            </Link>
-                        </Col>
-                    </Row>
-                    <Table columns={this.columns} rowKey="id"  dataSource={this.state.data}
-                           pagination={this.state.pagination}
-                           loading={this.state.loading}
-                           onChange={this.handleTableChange} />
-                    </div>
-                }
-            </div>*/}
-
-export default HelpList
+// 包装 component ，注入 dispatch 和 state 到其默认的 connect(select)(App) 中；
+export default connect(select)(HelpDetailList)

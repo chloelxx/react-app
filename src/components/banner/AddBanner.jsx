@@ -32,9 +32,9 @@ export default addBanner*/
 import {Link } from "react-router-dom";
 import moment from 'moment';
 import { Form, Input, Upload, Icon, message, Button,DatePicker } from 'antd';
-import Api from "../ajax/api.js"
-import uploadUrl from "../ajax/upload.js"
-import parseUrl from "../ajax/parseURL.js"
+import Api from "../../ajax/api.js"
+import uploadUrl from "../../ajax/upload.js"
+import parseUrl from "../../ajax/parseURL.js"
 const FormItem = Form.Item;
 
 
@@ -97,6 +97,7 @@ class addBanner extends React.Component {
             param=st.isModify?{...param,id:ban.id}:param;
             Api[key](param).then(()=>{
                 message.success(success);
+                this.props.history.push("/main/banner")
                 this.test();
             }).catch((msg)=>{
                 message.error(msg)
@@ -152,7 +153,7 @@ class addBanner extends React.Component {
         this.setState({addBanner:{...this.state.addBanner,url:e.target.value}})
     }
     test(){
-        window.location.href="/"
+        // window.location.href="/"
     }
     componentDidMount(){
         var params=parseUrl(window.location.search);
@@ -199,9 +200,9 @@ class addBanner extends React.Component {
         );
         const initBan=this.state.addBanner;
         const imageUrl = this.state.addBanner.imgUrl;
-        console.log("initBan:",initBan)
+        console.log("initBan:,this.props",initBan,this.props)
         return (
-            <Form onSubmit={this.handleSubmit} style={{width:"50%",margin:"0 auto",padding:"30px"}}>
+            <Form onSubmit={this.handleSubmit} style={{width:"50%",margin:"0 auto"}}>
                {/*<input value={this.state.bannerName} onChange={this.onChangeInput}/>*/}
                 <FormItem
                     {...formItemLayout}
@@ -295,8 +296,8 @@ class addBanner extends React.Component {
                 </FormItem>
                 <FormItem    wrapperCol={{ span:7, offset: 8 }}>
                     {/*htmlType="submit"*  onClick={this.test}*/}
-                    <Button type="primary" htmlType="submit"><Link to="/banner">确认</Link></Button>
-                    <Button ><Link to="/banner">取消</Link></Button>
+                    <Button type="primary" htmlType="submit">确认</Button>
+                    <Button ><Link to="/main/banner">取消</Link></Button>
                 </FormItem>
             </Form>
         );

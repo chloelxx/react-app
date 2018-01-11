@@ -2,8 +2,7 @@ import React,{Component} from "react";
 import {Link } from "react-router-dom";
 import 'antd/dist/antd.css'
 import { Table, Divider,Row, Col,Input,Icon,message} from 'antd';
-import api from "../ajax/api.js"
-import AddBanner from "./AddBanner.jsx"
+import api from "../../ajax/api.js"
 
 
 import { connect } from 'react-redux'
@@ -62,7 +61,7 @@ class HomePage extends Component{
         rowKey :"operator",
         render:(text)=>(
             <span>
-                <Link to={"/bannerConfig/addBanner?id="+text.id}>编辑</Link>
+                <Link to={"/main/addBanner?id="+text.id}>编辑</Link>
             </span>
         )
     }];
@@ -133,13 +132,13 @@ class HomePage extends Component{
 
     render(){
         const {dispach,menuItems}=this.props;
-
+        console.log("this.props:",this.props)
         var insert="hidden"
-        if(menuItems&&menuItems.banner&&menuItems.banner.insert){
+        if(menuItems&&menuItems["banner-insert"]){
             insert="visible"
         }
         return (
-        <div  style={{padding:"30px"}}>
+        <div>
             <h1 style={{margin:"20px 20px"}}>商户banner</h1>
             <hr/>
             <Row style={{margin:"10px"}}>
@@ -147,7 +146,7 @@ class HomePage extends Component{
                     <Search placeholder="input search text" size="large" style={{width:"50%"}} onSearch={value=>{this.search(value)}}/>
                 </Col>
                 <Col span={4} offset={12} style={{float:"right"}}>
-                    <Link to="/bannerConfig/addBanner">
+                    <Link to="/main/addBanner">
                         <span onClick={this.addBanner} style={{visibility:insert}}>
                             <Icon type="plus-circle-o" style={{marginRight:"5px"}}/>新增
                         </span>
@@ -276,7 +275,7 @@ HomePage.propTypes = {
 function select(state) {
     console.log("LinkCOm contain select is sign connent(select) state args param:",state)
     return {
-        menuItems:state.todos[0],
+        menuItems:state.todos.menudata,
     }
 }
 

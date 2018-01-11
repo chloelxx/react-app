@@ -8,16 +8,18 @@ import { Provider } from 'react-redux'
 import App from './component/redux/contain.jsx'
 import todoApp from './component/redux/reducers.jsx'
 
-
+import "./asset/third-part/mathquill/mathquill.css"
+import "./asset/less/editor.css"
+import Txt from "./editor.jsx"
 
 import registerServiceWorker from './registerServiceWorker';
+
+
 let store = createStore(todoApp)
-ReactDOM.render(
-    <Provider store={store}>
+{/*<Provider store={store}>
         <App />
-        {/*<BrowserRouter >*/}
-            {/*<Main />*/}
-        {/*</BrowserRouter>*/}
-    </Provider>
+    </Provider>*/}
+ReactDOM.render(
+    <Txt />
         ,document.getElementById('root'));
 registerServiceWorker();

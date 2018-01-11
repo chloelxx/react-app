@@ -3,8 +3,8 @@ import {Link } from "react-router-dom";
 import 'antd/dist/antd.css'
 import { Table, Divider,Row, Col,Input,Icon,Modal,Button,message} from 'antd';
 import Api from "../../ajax/api.js"
-
-
+import Delete from "../baise/Delete.jsx"
+import {connect} from "react-redux"
 const Search = Input.Search;
 class HelpList extends Component{
     state={
@@ -15,6 +15,7 @@ class HelpList extends Component{
         pagination: {},
         loading: false,
         operator:false,
+        delete:false,
     }
     columns = [{
         title: '问题类型',
@@ -26,7 +27,7 @@ class HelpList extends Component{
             title: '包含问题数',
             rowKey : 'imgUrl',
             // dataIndex:"imgUrl"
-            render: (text) => <Link to={"/helpCenterDetail?id="+text.id}>{text.problemNumber}</Link>,
+            render: (text) => <Link to={"/main/helpDetail?id="+text.id}>{text.problemNumber}</Link>,
         }, {
             title: '排序',
             dataIndex: 'showIndex',
@@ -39,7 +40,9 @@ class HelpList extends Component{
                     <span>
                         {/*onClick={this.showModal(text)} 会报错，render中必须是纯函数*/}
                       <a style={{marginRight: "20px"}} onClick={() => this.showModal(text)}>修改</a>
-                      <Link to={"/helpCenter?id=" + text.id}>删除</Link>
+                      <a onClick={()=>this.deleteHelpDoc(text.id)}>
+                          删除
+                      </a>
                    </span>
                 )
             }
@@ -67,6 +70,7 @@ class HelpList extends Component{
         // console.log("this.state:",this.state,params);
         this.getBannerData(params)
     }
+
     getBannerData(params){
         this.setState({ loading: true });
         var p={
@@ -95,6 +99,22 @@ class HelpList extends Component{
          this.setState({...text})
        // this.setState({showIndex:11,problemName:"text"})
 
+    }
+    deleteHelpDoc=(id)=>{
+        console.log("helpcenter:",this.props);
+        this.setState({
+            delete: true,
+            deleteId:id,
+        });
+        this.props.dispatch({type:"delDialog",
+            payload:{
+                visible:true,
+                param:{
+                    id:id,
+                },
+                api:"deleteHelpGroup"
+            }
+        })
     }
     handleOk = () => {
         this.setState({ loading: true });
@@ -132,7 +152,32 @@ class HelpList extends Component{
     initState(){
         this.setState({id:0,showIndex:"",problemName:""})
     }
+    handleDialog=(para,isDelete)=>{
+        this.setState({
+            delete: true,
+        });
+        if(isDelete){
+            Api.deleteHelpGroup({
+                id: this.state.deleteId,
+            }).then(data => {
+                message.success("删除成功");
+                this.getBannerData();
+                this.setState({delete:false});
+            }).catch((data)=>{
+                message.error(data.msg)
+            });
+        }
+        this.getBannerData();
+        this.setState({delete:false});
+        console.log("helpe center:",isDelete)
+    }
     render(){
+        const {dispatch,data}={...this.props};
+        console.log("helpList this.props:",this.props);
+        let insert="hidden"
+        if(data){
+            insert="visible"
+        }
         return (
             <div  style={{padding:"30px"}}>
                 <h1 style={{margin:"20px 20px"}}>帮助中心</h1>
@@ -142,7 +187,7 @@ class HelpList extends Component{
                     </Col>
                     <Col span={4} offset={12} style={{float:"right"}}>
                         {/*<Link to="/bannerConfig/addBanner">*/}
-                            <span onClick={e=>this.showModal()}> <Icon type="plus-circle-o" style={{marginRight:"5px"}}/>新增</span>
+                            <a onClick={e=>this.showModal()} style={{visibility:insert}}> <Icon type="plus-circle-o" style={{marginRight:"5px"}}/>新增</a>
                         {/*</Link>*/}
                     </Col>
                 </Row>
@@ -180,6 +225,7 @@ class HelpList extends Component{
                         </label>
                     </p>
                 </Modal>
+                <Delete handelDel={this.handleDialog}/>
             </div>
         )
     }
@@ -288,4 +334,14 @@ class HomePage extends React.Component {
                 }
             </div>*/}
 
-export default HelpList
+// Which props do we want to inject, given the global state?
+// Note: use https://github.com/faassen/reselect for better performance.
+function select(state) {
+    console.log("LinkCOm contain select is sign connent(select) state args param:",state)
+    return {
+        data:state.todos.menudata,
+    }
+}
+
+// 包装 component ，注入 dispatch 和 state 到其默认的 connect(select)(App) 中；
+export default connect(select)(HelpList)

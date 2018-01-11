@@ -122,7 +122,7 @@ class HomePage extends Component{
                         <Search placeholder="input search text" size="large" style={{width:"50%"}} onSearch={value=>{this.search(value)}}/>
                     </Col>
                     <Col span={4} offset={12} style={{float:"right"}}>
-                        <Link to="/bannerConfig/addBanner">
+                        <Link to="/main/addMerchant">
                             <span onClick={this.addBanner}> <Icon type="plus-circle-o" style={{marginRight:"5px"}}/>新增</span>
                         </Link>
                     </Col>

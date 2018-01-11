@@ -15,7 +15,6 @@ class AuthRoute extends Component {
     filterPathName() {
         const publicList = [
             '/login',
-            '/register'
         ]
         const pathname = this.props.location.pathname
         if (publicList.indexOf(pathname) > -1) {
@@ -26,15 +25,20 @@ class AuthRoute extends Component {
     }
     componentDidMount() {
         var cook=new cookies();
+        const pathname = this.props.location.pathname
+        console.log("AuthRouter:",pathname)
         if (this.filterPathName()) {
-            return null
+            return null;
         }
-        // if(cook.getCookieVal("username")) {
-        //     this.props.history.push("/main/banner");
-        // }else{
-        //     window.history.pushState(null, null, '/login')
-        // }
-
+        if(cook.getCookieVal("username")) {
+            if(pathname=="/main") {
+                this.props.history.push("/main/banner");
+            }else if(pathname=="/"){
+                this.props.history.push("/login");
+            }
+        }else{
+            this.props.history.push('/login')
+        }
     }
     render() {
         return (

@@ -184,7 +184,10 @@ module.exports = {
                         minimize: true,
                         sourceMap: shouldUseSourceMap,
                       },
-                    },
+                    }, {
+                          test: /\.less$/,
+                          loader: 'style!css!less'
+                      },
                     {
                       loader: require.resolve('postcss-loader'),
                       options: {

@@ -55,6 +55,7 @@ body{
 .content{
     background: #ffffff;
     width:100%;
+    padding:30px;
 }
 .footer{
     margin:0 auto;
@@ -76,4 +77,22 @@ body{
 }
 .header .ant-modal-title{
     color:#fff;
+}
+.content .ant-steps-label-horizontal{
+    width:50%;
+    margin:0 auto;
+}
+.ex-input{
+    width:50%;
+    min-width:500px;
+    margin:10px auto;
+}
+.ex-input .ant-input{
+    width:400px;
+}
+.ex-input .editor-container{
+    display: inline-block;
+    width:400px;
+    vertical-align: top;
+   /* height:300px;*/
 }

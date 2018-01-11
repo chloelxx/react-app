@@ -1,37 +1,7 @@
 import React,{Component} from "react";
-/*
-import {Input,Button } from 'antd'
-class addBanner extends Component{
-    constructor(props) {
-        super(props);
-        console.log("this:",this);
-        this.state={liked:false};
-        this.handleClick=this.handleClick.bind(this);
-        // return {liked: false};
-    }
-    handleClick=()=> {
-        this.setState({liked: !this.state.liked});
-    }
-    render(){
-        var text = this.state.liked ? '喜欢' : '不喜欢';
-        return (
-            <div>
-                <div>banner名称：<Input /></div>
-                <div>banner图片：<img /></div>
-                <div>跳转URL：<img /></div>
-                <div>排序：<img /></div>
-                <div>上线时间：<img /></div>
-                <div>结束：<img /></div>
-                <div><Button type="primary">保存</Button><Button>取消</Button></div>
-            </div>
-        );
-    }
-}
-
-export default addBanner*/
 import {connect} from "react-redux"
 import { Form, Input, Upload, Icon, message, Button,Modal } from 'antd';
-
+import Api from "../../ajax/api.js"
 
 class Delete extends Component{
     state={
@@ -42,19 +12,40 @@ class Delete extends Component{
         super(props);
     }
     handleOk = () => {
-        this.setState({ loading: true });
-        this.props.deleteHandle(false,true)
+        console.log("handleOk props:",this.props)
+         this.setState({ loading: true });
+         const deleApi=this.props.deleteData,api=deleApi.api;
+        console.log("deleApi:",api)
+        //this.props.deleteHandle(false,true)
+        Api[api](deleApi.param).then(data=>{
+            message.success("删除成功")
+            this.setState({ loading: false });
+            this.props.dispatch({type:"delDialog",payload:{visible:false}})
+            this.props.handelDel()
+        }).catch(data=>{
+            message.error(data.msg)
+            this.setState({ loading: false });
+            this.props.dispatch({type:"delDialog",payload:{visible:false}})
+        })
     }
     handleCancel = () => {
-        this.setState({ visible: false });
-        this.props.deleteHandle(false,false)
+        //this.setState({ visible: false });
+       // this.props.deleteHandle(false,false)
+        this.props.dispatch({type:"delDialog",payload:{visible:false}})
         console.log("props:",this.props)
     }
     render(){
         console.log("delete this.props:",this.props);
+        // const {del}=this.props.deleteApi;
+        let vis=false
+        if(this.props.deleteData&&this.props.deleteData.visible){
+            vis=true
+        }else{
+            vis=false;
+        }
         return (
             <Modal
-                visible={this.props.visible}
+                visible={vis}
                 title="提示"
                 onOk={this.handleOk}
                 className="helpCenter"
@@ -62,12 +53,11 @@ class Delete extends Component{
                 footer={[
                     <Button key="back" onClick={this.handleCancel}>取消</Button>,
                     <Button key="submit" type="primary"
-                            loading={this.state.loading}
+                             loading={this.state.loading}
                             onClick={this.handleOk}>
                         确定
                     </Button>,
                 ]}
-                style={{color:"#fff"}}
                 bodyStyle={{textAlign:"center"}}
             >
                 <p style={{textAlign:"center"}}>是否确定删除</p>
@@ -80,7 +70,7 @@ class Delete extends Component{
 function select(state) {
     console.log("LinkCOm contain select is sign connent(select) state args param:",state)
     return {
-        delete:state.todos[0],
+        deleteData:state.todos.delDialog,
     }
 }
 

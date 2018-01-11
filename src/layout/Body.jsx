@@ -20,11 +20,11 @@ export default class Body extends Component{
                 <Header {...this.props} />
                 <div>
                     <div className="side">
-                        <LinkCom />
+                        <LinkCom {...this.props}/>
                     </div>
                     <div className="mainBody">
                         <div className="content">
-                            <RouterCom />
+                            <RouterCom {...this.props}/>
                         </div>
                     </div>
                 </div>

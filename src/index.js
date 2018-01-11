@@ -8,6 +8,8 @@ import reducers from "./redux/reducers.jsx"
 
 
 import "./asset/main.css"
+import "./asset/third-part/mathquill/mathquill.css"
+import "./asset/less/editor.css"
 
 import registerServiceWorker from './registerServiceWorker';
 

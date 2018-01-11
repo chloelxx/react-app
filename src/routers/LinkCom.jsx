@@ -36,71 +36,79 @@ class Aside extends Component {
     state = {
         openKeys: ['sub1'],
         menuData:[],
+        selectedKeys:[],
     };
     constructor(props){
         super(props);
         console.log("path linkCom props:",this.props);
     }
     componentDidMount(){
-        console.log("componentDidMount")
-        this.getMeunList()
+        console.log("componentDidMount:",this.state.menuData)
+       // this.getMeunList();
+        this.findActiveSide(this.state.menuData)
+
     }
     componentWillMount(){
         console.log("componentWillMount")
-       // this.getMeunList()
+        this.getMeunList();
+        // this.setState({selectedKeys:["2"]})
     }
     componentWillUpdate(){
         console.log("componentWillUpdate")
-        //this.getMeunList()
+
     }
     componentWillReceiveProps(){
         console.log("componentWillReceiveProps")
-        //this.getMeunList()
+       // this.findActiveSide(this.state.menuData)
     }
+    /*shouldComponentUpdate(){
+        return true;
+    }*/
     componentDidUpdate(){
         console.log("componentDidUpdate")
-        //this.getMeunList()
+        //this.findActiveSide(this.state.menuData)
     }
     getMeunList(){
         console.log("willMount")
         Api.getMenuPermissions().then((res)=>{
-            console.log("res willMount:");
-          //  this.setState({menu:res.bizData});
-           
             this.matchMenuData(res.bizData);
         }).catch((data)=>{
             message.error(data.msg);
             if(data.rtnCode=="biz_error_20002"){
-                window.history.pushState(null,null,"/login");
+                this.props.history.push("/login");
             }
         })
-        console.log("will mount getMeunList state:",this)
     }
     matchMenuData(msg){
        let meun=[]
        let operator={}
        for(let i in msg){
-           var index=i.indexOf(":list"),
-               keyGrop=i.slice(0,i.indexOf(":")),
-               detail=i.slice(i.indexOf(":")+1);
-           if(!operator[keyGrop]){
-               operator[keyGrop]={};
-           }
-           operator[keyGrop][detail]=msg[i];
-           if(index>-1&&msg[i]){
+           var index=i.indexOf(":list"),subMeun=i.replace(":","-");
+           operator[subMeun]=msg[i];
+           if(index>-1){
                var key=i.slice(0,index);
                var value=this.getMenuText(key);
                if(value){
                    meun.push({key:key,text:value});
-                   // meun[key]=value
                }
            }
 
        }
-       this.setState({menuData:meun})
-        console.log("router state:",this.state,operator);
+        this.findActiveSide(meun)
+        this.setState({ menuData:meun})
         this.props.dispatch({type:"menudata",payload:operator})
 
+    }
+    findActiveSide(meun){
+        console.log("menu:",meun)
+        var pathname= this.props.location.pathname,selectedKey="-1";
+        for(let i=0,len=meun.length;i<len;i++){
+            if(pathname.indexOf(meun[i].key)>-1){
+                selectedKey=i.toString();
+            }
+        }
+        console.log("index of:",selectedKey,this.state)
+        this.setState({ selectedKeys:[selectedKey]});
     }
     getMenuText(key){
         switch (key){
@@ -123,11 +131,12 @@ class Aside extends Component {
             });
         }
     }
+    activeKey=(item, key, keyPath)=>{
+        this.setState({selectedKeys:[item.key]})
+    }
     render() {
         const  menuData=this.state.menuData;
-        console.log("render meun:",this.menuData)
         const { dispatch, menuItems } = this.props;
-        console.log("LinkCom redux this props:",this.props);
         return (
             <div>
                 <Menu
@@ -135,11 +144,13 @@ class Aside extends Component {
                     openKeys={this.state.openKeys}
                     onOpenChange={this.onOpenChange}
                     style={{ width: 240 }}
+                    selectedKeys={this.state.selectedKeys}
+                    onClick={this.activeKey}
 
                 >
                     {menuData.map( (item,index)=> {
                         return (
-                            <Menu.Item key={index}>
+                            <Menu.Item key={index} >
                                 <Link to={"/main/"+item.key}>{item.text}</Link>
                             </Menu.Item>
                         )
@@ -174,14 +185,13 @@ class Aside extends Component {
 }
 
 Aside.propTypes = {
-    menuItems: React.PropTypes.array,
+    menuItems: React.PropTypes.object,
 }
 
 
 // Which props do we want to inject, given the global state?
 // Note: use https://github.com/faassen/reselect for better performance.
 function select(state) {
-    console.log("LinkCOm contain select is sign connent(select) state args param:",state)
     return {
         menuItems:state.todos,
     }
